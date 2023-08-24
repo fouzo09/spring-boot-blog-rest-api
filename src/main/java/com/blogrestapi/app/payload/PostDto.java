@@ -1,6 +1,7 @@
 package com.blogrestapi.app.payload;
 
 import lombok.Data;
+import org.springframework.http.HttpStatusCode;
 
 @Data
 public class PostDto {
