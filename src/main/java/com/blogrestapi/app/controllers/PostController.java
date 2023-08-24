@@ -25,8 +25,11 @@ public class PostController {
     }
 
     @GetMapping
-    public List<PostDto> list(){
-        return postService.getAllPosts();
+    public List<PostDto> list(
+            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "1", required = false) int pageSize
+    ){
+        return postService.getAllPosts(pageNo, pageSize);
     }
 
     @GetMapping("/{id}")
