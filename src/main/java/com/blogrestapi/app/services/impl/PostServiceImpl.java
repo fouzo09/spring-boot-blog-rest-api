@@ -1,6 +1,7 @@
 package com.blogrestapi.app.services.impl;
 
 import com.blogrestapi.app.entities.Post;
+import com.blogrestapi.app.exceptions.ResourceNotFoundException;
 import com.blogrestapi.app.payload.PostDto;
 import com.blogrestapi.app.repositories.PostRepository;
 import com.blogrestapi.app.services.PostService;
@@ -24,15 +25,35 @@ public class PostServiceImpl implements PostService {
 
         Post newPost = mapToEntity(postDto);
         Post createdPost = postRepository.save(newPost);
-        PostDto postDtoResponse = mapToDTO(createdPost);
-
-        return postDtoResponse;
+        return mapToDTO(createdPost);
     }
 
     @Override
-    public List<PostDto> listOfPosts() {
+    public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAll();
         return posts.stream().map(post -> mapToDTO(post)).collect(Collectors.toList());
+    }
+
+    @Override
+    public PostDto getPostById(Long Id) {
+        Post post = postRepository.findById(Id).orElseThrow(()-> new ResourceNotFoundException("Post", "Id", Id.toString()));
+        return mapToDTO(post);
+    }
+
+    @Override
+    public PostDto updatePostById(PostDto postDto, Long Id) {
+        Post post = postRepository.findById(Id).orElseThrow(()-> new ResourceNotFoundException("Post", "Id", Id.toString()));
+        post.setTitle(postDto.getTitle());
+        post.setResume(postDto.getResume());
+        post.setContent(postDto.getContent());
+        Post updatedPost = postRepository.save(post);
+        return mapToDTO(updatedPost);
+    }
+
+    @Override
+    public void deletePostById(Long Id) {
+        Post post = postRepository.findById(Id).orElseThrow(()-> new ResourceNotFoundException("Post", "Id", Id.toString()));
+        postRepository.delete(post);
     }
 
     private PostDto mapToDTO(Post post){
@@ -49,6 +70,16 @@ public class PostServiceImpl implements PostService {
     private Post mapToEntity(PostDto postDto){
         Post post = new Post();
 
+        post.setTitle(postDto.getTitle());
+        post.setResume(postDto.getResume());
+        post.setContent(postDto.getContent());
+
+        return  post;
+    }
+
+    private Post mapToEntityWithId(PostDto postDto, Long Id){
+        Post post = new Post();
+        post.setId(Id);
         post.setTitle(postDto.getTitle());
         post.setResume(postDto.getResume());
         post.setContent(postDto.getContent());
