@@ -3,6 +3,7 @@ package com.blogrestapi.app.services.impl;
 import com.blogrestapi.app.entities.Post;
 import com.blogrestapi.app.exceptions.ResourceNotFoundException;
 import com.blogrestapi.app.payload.PostDto;
+import com.blogrestapi.app.payload.PostResponse;
 import com.blogrestapi.app.repositories.PostRepository;
 import com.blogrestapi.app.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +33,33 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getAllPosts(int pageNo, int pageSize) {
+    public PostResponse getAllPosts(int pageNo, int pageSize) {
+
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        List<Post> posts = postRepository.findAll(pageable).getContent();
-        return posts.stream().map(post -> mapToDTO(post)).collect(Collectors.toList());
+
+        Page<Post> posts = postRepository.findAll(pageable);
+
+        List<Post> listOfPosts = posts.getContent();
+
+        List<PostDto> postDtoList = posts.stream().map(post -> mapToDTO(post)).collect(Collectors.toList());
+
+        PostResponse postResponse = new PostResponse();
+
+        postResponse.setContent(postDtoList);
+        postResponse.setPageNumber(posts.getNumber());
+        postResponse.setPageSize(posts.getSize());
+        postResponse.setCountOfPosts(posts.getTotalElements());
+        postResponse.setCountOfPages(posts.getTotalPages());
+        postResponse.setLast(posts.isLast());
+
+        return  postResponse;
     }
 
     @Override
     public PostDto getPostById(Long Id) {
+
         Post post = postRepository.findById(Id).orElseThrow(()-> new ResourceNotFoundException("Post", "Id", Id.toString()));
+
         return mapToDTO(post);
     }
 

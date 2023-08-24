@@ -1,8 +1,10 @@
 package com.blogrestapi.app.controllers;
 
 import com.blogrestapi.app.payload.PostDto;
+import com.blogrestapi.app.payload.PostResponse;
 import com.blogrestapi.app.repositories.PostRepository;
 import com.blogrestapi.app.services.PostService;
+import com.blogrestapi.app.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +27,9 @@ public class PostController {
     }
 
     @GetMapping
-    public List<PostDto> list(
-            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "1", required = false) int pageSize
+    public PostResponse list(
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize
     ){
         return postService.getAllPosts(pageNo, pageSize);
     }
