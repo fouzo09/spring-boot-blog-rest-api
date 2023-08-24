@@ -1,1 +1,1 @@
-# spring-boot-blog-rest-api
+# Springboot Blog RestApi
