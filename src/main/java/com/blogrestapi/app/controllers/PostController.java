@@ -5,6 +5,7 @@ import com.blogrestapi.app.payload.PostResponse;
 import com.blogrestapi.app.repositories.PostRepository;
 import com.blogrestapi.app.services.PostService;
 import com.blogrestapi.app.utils.AppConstants;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<PostDto> create(@RequestBody PostDto postDto){
+    public ResponseEntity<PostDto> create(@Valid  @RequestBody PostDto postDto){
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
 
