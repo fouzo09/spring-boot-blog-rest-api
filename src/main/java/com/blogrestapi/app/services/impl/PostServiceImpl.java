@@ -6,6 +6,7 @@ import com.blogrestapi.app.payload.PostDto;
 import com.blogrestapi.app.payload.PostResponse;
 import com.blogrestapi.app.repositories.PostRepository;
 import com.blogrestapi.app.services.PostService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,9 +20,11 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
 
     private PostRepository postRepository;
+    private ModelMapper modelMapper;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository){
+    public PostServiceImpl(PostRepository postRepository, ModelMapper modelMapper){
+        this.modelMapper = modelMapper;
         this.postRepository = postRepository;
     }
     @Override
@@ -80,33 +83,13 @@ public class PostServiceImpl implements PostService {
     }
 
     private PostDto mapToDTO(Post post){
-        PostDto postDto = new PostDto();
-
-        postDto.setId(post.getId());
-        postDto.setTitle(post.getTitle());
-        postDto.setResume(post.getResume());
-        postDto.setContent(post.getContent());
-
+        PostDto postDto = modelMapper.map(post, PostDto.class);
         return postDto;
     }
 
     private Post mapToEntity(PostDto postDto){
-        Post post = new Post();
-
-        post.setTitle(postDto.getTitle());
-        post.setResume(postDto.getResume());
-        post.setContent(postDto.getContent());
-
+        Post post = modelMapper.map(postDto, Post.class);
         return  post;
     }
 
-    private Post mapToEntityWithId(PostDto postDto, Long Id){
-        Post post = new Post();
-        post.setId(Id);
-        post.setTitle(postDto.getTitle());
-        post.setResume(postDto.getResume());
-        post.setContent(postDto.getContent());
-
-        return  post;
-    }
 }
